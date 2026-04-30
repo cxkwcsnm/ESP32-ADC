@@ -1,6 +1,8 @@
 #include "GetBatteryLevel.h"
 
-
+static const char *TAG = "BATTERY";
+static adc_oneshot_unit_handle_t adc1_handle = NULL;  // ADC 句柄
+static bool is_initialized = false;
 
 // ========== 初始化函数（只调用一次） ==========
 esp_err_t battery_adc_init(void)

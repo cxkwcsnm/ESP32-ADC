@@ -10,10 +10,8 @@
 #define VOLTAGE_DIVIDER_RATIO    0.5f             // 电压分压比 = r2/(r1 + r2)
 
 
-// ========== 全局变量 ==========
-static const char *TAG = "BATTERY";
-static adc_oneshot_unit_handle_t adc1_handle = NULL;  // ADC 句柄
-static bool is_initialized = false;
+
+
 
 esp_err_t battery_adc_init(void);
 

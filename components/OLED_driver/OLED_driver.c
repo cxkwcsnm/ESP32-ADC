@@ -119,6 +119,7 @@ esp_err_t oled_init(i2c_port_t port, gpio_num_t sda_io, gpio_num_t scl_io)
         return err;
     }
 
+    ESP_LOGI(TAG, "OLED 初始化成功");
     return oled_refresh();
 }
 
