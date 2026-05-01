@@ -61,6 +61,15 @@ extern "C"
      */
     char *RTC_get_HH_MM(void);
 
+    /**
+    * @brief 获取时-分-秒字符串
+    *
+    * @return char* 格式化后的时间字符串，格式为 "HH:MM:SS"
+    *
+    * @note 返回的字符串为静态缓冲区，不可被多个任务同时调用
+    */
+    char* RTC_get_HH_MM_SS(void);
+
 #ifdef __cplusplus
 }
 #endif

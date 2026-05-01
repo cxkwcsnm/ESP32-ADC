@@ -39,7 +39,7 @@ static char date_buf[16];
  *
  * 用于存储格式化后的时分字符串
  */
-static char hhmm_buf[8];
+static char hhmm_buf[16];
 
 /**
  * @brief 初始化 RTC 时间组件
@@ -196,6 +196,26 @@ char *RTC_get_HH_MM(void)
      * %M - 分钟（00-59）
      */
     strftime(hhmm_buf, sizeof(hhmm_buf), "%H:%M", &timeinfo);
+
+    return hhmm_buf;
+}
+
+char *RTC_get_HH_MM_SS(void)
+{
+    time_t now;
+    struct tm timeinfo;
+
+    time(&now);
+    localtime_r(&now, &timeinfo);
+
+    /**
+     * 将 tm 结构体格式化为时分秒字符串
+     * 格式说明：
+     * %H - 小时（00-23，24小时制）
+     * %M - 分钟（00-59）
+     * %S - 秒（00-59）
+     */
+    strftime(hhmm_buf, sizeof(hhmm_buf), "%H:%M:%S", &timeinfo);
 
     return hhmm_buf;
 }

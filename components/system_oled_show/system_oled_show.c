@@ -13,7 +13,7 @@ void OLEDShowTask(void *pvParameters)
         snprintf(voltage_str, sizeof(voltage_str), "%.2f V", voltage);
 
         oled_clear_buffer();
-        oled_show_string(0, 0, RTC_get_HH_MM());
+        oled_show_string(0, 0, RTC_get_HH_MM_SS()); // 显示当前时分秒
 
         oled_show_string(0, 3, "Voltage:");
         oled_show_string(48, 3, voltage_str);
