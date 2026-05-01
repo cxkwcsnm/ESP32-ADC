@@ -1,6 +1,7 @@
-#include "system_batteryshow.h"
+#include "system_oled_show.h"
+#include "RTC_time.h"
 
-void BatteryShow(void *pvParameters)
+void OLEDShowTask(void *pvParameters)
 {
     while (1)
     {
@@ -12,14 +13,16 @@ void BatteryShow(void *pvParameters)
         snprintf(voltage_str, sizeof(voltage_str), "%.2f V", voltage);
 
         oled_clear();
-        oled_show_string(0, 0, "Voltage:");
-        oled_show_string(48, 0, voltage_str);
+        oled_show_string(0, 0, RTC_get_HH_MM());
+
+        oled_show_string(0, 1, "Voltage:");
+        oled_show_string(48, 1, voltage_str);
 
         // 使用 oled_draw_image 显示电池图标
         oled_draw_image(100, 0, battery_pattern(voltage), 19, 8);
 
         oled_refresh();
 
-        vTaskDelay(1000); 
+        vTaskDelay(100);
     }
 }
