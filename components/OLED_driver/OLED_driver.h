@@ -39,6 +39,11 @@ extern "C"
     esp_err_t oled_deinit(void);
 
     /**
+     * @brief 清空 OLED 屏幕缓存，但不刷新显示
+     */
+    esp_err_t oled_clear_buffer(void);
+
+    /**
      * @brief 清空 OLED 屏幕缓存，并立即刷新显示
      */
     esp_err_t oled_clear(void);

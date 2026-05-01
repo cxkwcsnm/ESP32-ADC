@@ -160,6 +160,22 @@ esp_err_t oled_set_contrast(uint8_t contrast)
     return oled_i2c_write_raw(cmds, sizeof(cmds), 0x00);
 }
 
+esp_err_t oled_clear_buffer(void)
+{
+    if (!s_oled_initialized)
+    {
+        return ESP_ERR_INVALID_STATE;
+    }
+    memset(s_oled_buffer, 0, sizeof(s_oled_buffer));
+    return ESP_OK;
+}
+/*
+1. oled_clear() 函数会 先清空缓冲区，然后立即刷新屏幕 （显示黑色）
+2. 然后在缓冲区中绘制新内容
+3. 最后再次刷新屏幕显示新内容
+这样就造成了： 黑色 → 新内容 的闪烁效果
+*/
+
 esp_err_t oled_clear(void)
 {
     if (!s_oled_initialized)
@@ -169,6 +185,7 @@ esp_err_t oled_clear(void)
     memset(s_oled_buffer, 0, sizeof(s_oled_buffer));
     return oled_refresh();
 }
+
 
 static esp_err_t oled_set_page_address(uint8_t page)
 {
