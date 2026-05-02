@@ -4,5 +4,5 @@ idf_component_register(
         "OLED_driver.c"
 
     INCLUDE_DIRS "."
-    REQUIRES OLED_Data driver
+    REQUIRES OLED_Data driver BSP
 )

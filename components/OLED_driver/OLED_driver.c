@@ -1,5 +1,6 @@
 #include "OLED_driver.h"
 #include "OLED_Data.h"
+#include "myiic.h"
 #include <string.h>
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
@@ -8,7 +9,7 @@
 static const char *TAG = "OLED_DRIVER";
 static uint8_t s_oled_buffer[OLED_WIDTH * OLED_PAGES];
 static bool s_oled_initialized = false;
-static i2c_port_t s_oled_i2c_port = I2C_NUM_0;
+static i2c_master_dev_handle_t s_oled_dev_handle = NULL;
 
 static esp_err_t oled_i2c_write_raw(const uint8_t *data, size_t len, uint8_t control)
 {
@@ -17,74 +18,33 @@ static esp_err_t oled_i2c_write_raw(const uint8_t *data, size_t len, uint8_t con
         return ESP_ERR_INVALID_STATE;
     }
 
-    i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-    esp_err_t err = i2c_master_start(cmd);
-    if (err != ESP_OK)
+    uint8_t *write_buf = (uint8_t *)malloc(len + 1);
+    if (write_buf == NULL)
     {
-        i2c_cmd_link_delete(cmd);
-        return err;
+        ESP_LOGE(TAG, "Failed to allocate memory");
+        return ESP_ERR_NO_MEM;
     }
 
-    err = i2c_master_write_byte(cmd, (OLED_I2C_ADDRESS << 1) | I2C_MASTER_WRITE, true);
-    if (err != ESP_OK)
-    {
-        i2c_cmd_link_delete(cmd);
-        return err;
-    }
+    write_buf[0] = control;
+    memcpy(&write_buf[1], data, len);
 
-    err = i2c_master_write_byte(cmd, control, true);
-    if (err != ESP_OK)
-    {
-        i2c_cmd_link_delete(cmd);
-        return err;
-    }
+    esp_err_t err = myiic_write(s_oled_dev_handle, write_buf, len + 1);
 
-    err = i2c_master_write(cmd, data, len, true);
-    if (err != ESP_OK)
-    {
-        i2c_cmd_link_delete(cmd);
-        return err;
-    }
-
-    err = i2c_master_stop(cmd);
-    if (err == ESP_OK)
-    {
-        err = i2c_master_cmd_begin(s_oled_i2c_port, cmd, pdMS_TO_TICKS(1000));
-    }
-
-    i2c_cmd_link_delete(cmd);
+    free(write_buf);
     return err;
 }
 
-esp_err_t oled_init(i2c_port_t port, gpio_num_t sda_io, gpio_num_t scl_io)
+esp_err_t oled_init(void)
 {
     if (s_oled_initialized)
     {
         return ESP_ERR_INVALID_STATE;
     }
 
-    s_oled_i2c_port = port;
-
-    i2c_config_t i2c_conf = {
-        .mode = I2C_MODE_MASTER,
-        .sda_io_num = sda_io,
-        .sda_pullup_en = GPIO_PULLUP_ENABLE,
-        .scl_io_num = scl_io,
-        .scl_pullup_en = GPIO_PULLUP_ENABLE,
-        .master.clk_speed = 400000,
-    };
-
-    esp_err_t err = i2c_param_config(port, &i2c_conf);
+    esp_err_t err = myiic_add_device(OLED_I2C_ADDRESS, &s_oled_dev_handle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "I2C config failed: %s", esp_err_to_name(err));
-        return err;
-    }
-
-    err = i2c_driver_install(port, i2c_conf.mode, 0, 0, 0);
-    if (err != ESP_OK)
-    {
-        ESP_LOGE(TAG, "I2C driver install failed: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Failed to add OLED device: %s", esp_err_to_name(err));
         return err;
     }
 
@@ -115,11 +75,12 @@ esp_err_t oled_init(i2c_port_t port, gpio_num_t sda_io, gpio_num_t scl_io)
     {
         ESP_LOGE(TAG, "OLED init commands failed: %s", esp_err_to_name(err));
         s_oled_initialized = false;
-        i2c_driver_delete(port);
+        myiic_remove_device(s_oled_dev_handle);
+        s_oled_dev_handle = NULL;
         return err;
     }
 
-    ESP_LOGI(TAG, "OLED 初始化成功");
+    ESP_LOGI(TAG, "OLED initialized successfully");
     return oled_refresh();
 }
 
@@ -130,10 +91,12 @@ esp_err_t oled_deinit(void)
         return ESP_ERR_INVALID_STATE;
     }
 
-    esp_err_t err = i2c_driver_delete(s_oled_i2c_port);
+    esp_err_t err = myiic_remove_device(s_oled_dev_handle);
     if (err == ESP_OK)
     {
         s_oled_initialized = false;
+        s_oled_dev_handle = NULL;
+        ESP_LOGI(TAG, "OLED deinitialized");
     }
     return err;
 }

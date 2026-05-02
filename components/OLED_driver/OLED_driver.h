@@ -3,8 +3,6 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include "esp_err.h"
-#include "driver/i2c.h"
-#include "driver/gpio.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -21,20 +19,17 @@ extern "C"
     /**
      * @brief 初始化 SSD1306 OLED 屏幕
      *
-     * 这个函数初始化 I2C 总线，并且设置 OLED 的基础显示参数。
+     * 这个函数初始化 OLED 屏幕，使用已配置好的 MYIIC 总线。
      * 适用于地址为 0x3C、分辨率 128x64 的 OLED 屏幕。
      *
-     * @param port I2C 端口号，例如 I2C_NUM_0
-     * @param sda_io SDA 引脚
-     * @param scl_io SCL 引脚
      * @return ESP_OK 初始化成功
      */
-    esp_err_t oled_init(i2c_port_t port, gpio_num_t sda_io, gpio_num_t scl_io);
+    esp_err_t oled_init(void);
 
     /**
      * @brief 反初始化 OLED 驱动
      *
-     * 释放 I2C 驱动资源，停止 OLED 显示刷新。
+     * 释放 OLED 设备资源。
      */
     esp_err_t oled_deinit(void);
 
