@@ -2,6 +2,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
+
 static const char *TAG = "MYIIC";
 i2c_master_bus_handle_t bus_handle;  /* 总线句柄 */
 static bool bus_initialized = false; /* 总线初始化状态 */
@@ -15,7 +16,7 @@ esp_err_t myiic_init(void)
 {
     if (bus_initialized)
     {
-        ESP_LOGW(TAG, "I2C bus already initialized");
+        ESP_LOGW(TAG, "I2C总线 已初始化");
         return ESP_OK;
     }
 
@@ -31,12 +32,12 @@ esp_err_t myiic_init(void)
     esp_err_t err = i2c_new_master_bus(&i2c_bus_config, &bus_handle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Failed to create I2C master bus: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG, "I2C总线 初始化失败: %s", esp_err_to_name(err));
         return err;
     }
 
     bus_initialized = true;
-    ESP_LOGI(TAG, "I2C bus initialized successfully (SDA: %d, SCL: %d)", IIC_SDA_GPIO_PIN, IIC_SCL_GPIO_PIN);
+    ESP_LOGI(TAG, "I2C总线 初始化成功 (SDA: %d, SCL: %d)", IIC_SDA_GPIO_PIN, IIC_SCL_GPIO_PIN);
     return ESP_OK;
 }
 
@@ -56,7 +57,7 @@ esp_err_t myiic_deinit(void)
     if (err == ESP_OK)
     {
         bus_initialized = false;
-        ESP_LOGI(TAG, "I2C bus deinitialized");
+        ESP_LOGI(TAG, "I2C总线 反初始化成功");
     }
     return err;
 }
@@ -71,7 +72,7 @@ esp_err_t myiic_add_device(uint16_t dev_addr, i2c_master_dev_handle_t *dev_handl
 {
     if (!bus_initialized)
     {
-        ESP_LOGE(TAG, "I2C bus not initialized");
+        ESP_LOGE(TAG, "I2C总线 未初始化");
         return ESP_ERR_INVALID_STATE;
     }
 
@@ -84,11 +85,11 @@ esp_err_t myiic_add_device(uint16_t dev_addr, i2c_master_dev_handle_t *dev_handl
     esp_err_t err = i2c_master_bus_add_device(bus_handle, &dev_cfg, dev_handle);
     if (err != ESP_OK)
     {
-        ESP_LOGE(TAG, "Failed to add device at address 0x%02X: %s", dev_addr, esp_err_to_name(err));
+        ESP_LOGE(TAG, "I2C总线 添加设备 0x%02X 失败: %s", dev_addr, esp_err_to_name(err));
     }
     else
     {
-        ESP_LOGI(TAG, "Device added at address 0x%02X", dev_addr);
+        ESP_LOGI(TAG, "I2C总线 添加设备 0x%02X 成功", dev_addr);
     }
     return err;
 }
@@ -100,7 +101,16 @@ esp_err_t myiic_add_device(uint16_t dev_addr, i2c_master_dev_handle_t *dev_handl
  */
 esp_err_t myiic_remove_device(i2c_master_dev_handle_t dev_handle)
 {
-    return i2c_master_bus_rm_device(dev_handle);
+    esp_err_t err = i2c_master_bus_rm_device(dev_handle);
+    if (err == ESP_OK)
+    {
+        ESP_LOGI(TAG, "I2C总线 移除设备成功");
+    }
+    else
+    {
+        ESP_LOGE(TAG, "I2C总线 移除设备失败: %s", esp_err_to_name(err));
+    }
+    return err;
 }
 
 /**
@@ -112,7 +122,12 @@ esp_err_t myiic_remove_device(i2c_master_dev_handle_t dev_handle)
  */
 esp_err_t myiic_write(i2c_master_dev_handle_t dev_handle, const uint8_t *data, size_t len)
 {
-    return i2c_master_transmit(dev_handle, data, len, pdMS_TO_TICKS(1000));
+    esp_err_t err = i2c_master_transmit(dev_handle, data, len, pdMS_TO_TICKS(1000));
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "I2C总线 写入 %d 字节数据失败: %s", len, esp_err_to_name(err));
+    }
+    return err;
 }
 
 /**
@@ -124,7 +139,12 @@ esp_err_t myiic_write(i2c_master_dev_handle_t dev_handle, const uint8_t *data, s
  */
 esp_err_t myiic_read(i2c_master_dev_handle_t dev_handle, uint8_t *data, size_t len)
 {
-    return i2c_master_receive(dev_handle, data, len, pdMS_TO_TICKS(1000));
+    esp_err_t err = i2c_master_receive(dev_handle, data, len, pdMS_TO_TICKS(1000));
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "I2C总线 读取 %d 字节数据失败: %s", len, esp_err_to_name(err));
+    }
+    return err;
 }
 
 /**
@@ -138,5 +158,10 @@ esp_err_t myiic_read(i2c_master_dev_handle_t dev_handle, uint8_t *data, size_t l
  */
 esp_err_t myiic_write_read(i2c_master_dev_handle_t dev_handle, const uint8_t *write_data, size_t write_len, uint8_t *read_data, size_t read_len)
 {
-    return i2c_master_transmit_receive(dev_handle, write_data, write_len, read_data, read_len, pdMS_TO_TICKS(1000));
+    esp_err_t err = i2c_master_transmit_receive(dev_handle, write_data, write_len, read_data, read_len, pdMS_TO_TICKS(1000));
+    if (err != ESP_OK)
+    {
+        ESP_LOGE(TAG, "I2C总线 写入读取失败: %s", esp_err_to_name(err));
+    }
+    return err;
 }
