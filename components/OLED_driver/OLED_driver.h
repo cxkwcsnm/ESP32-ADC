@@ -1,4 +1,5 @@
-#pragma once
+#ifndef OLED_DRIVER_H
+#define OLED_DRIVER_H
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -116,4 +117,6 @@ extern "C"
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif

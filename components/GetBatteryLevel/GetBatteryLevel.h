@@ -1,3 +1,6 @@
+#ifndef GET_BATTERY_LEVEL_H
+#define GET_BATTERY_LEVEL_H
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_system.h"
@@ -7,7 +10,10 @@
 #include "OLED_Data.h"
 
 
+
+
 #define VOLTAGE_DIVIDER_RATIO    0.5f             // 电压分压比 = r2/(r1 + r2)
+
 
 
 
@@ -31,3 +37,5 @@ void battery_adc_deinit(void);
 esp_err_t battery_get_average_voltage(int samples, float *out_voltage);
 
 const uint8_t * battery_pattern(float voltage);  // 根据电压返回对应的电池图标字符串
+
+#endif
