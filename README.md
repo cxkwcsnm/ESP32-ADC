@@ -64,7 +64,7 @@ ESP32S3-Wearable-Core/
 2. 克隆本仓库：
 
 ```bash
-git clone https://github.com/your-username/ESP32S3-Wearable-Core.git
+git clone https://github.com/Griffith-Lin/ESP32S3-Wearable-Core.git
 cd ESP32S3-Wearable-Core
 ```
 
