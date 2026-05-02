@@ -1,78 +1,79 @@
-# macOS
+# === macOS ===
 .DS_Store
 .AppleDouble
 .LSOverride
 
-# Directory metadata
-.directory
+# === Windows ===
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.exe
+*.dll
+*.so
+*.dylib
 
-# Temporary files
+# === Temporary Files ===
 *~
 *.swp
 *.swo
 *.bak
 *.tmp
-
-# Log files
 *.log
 
-# Build artifacts and directories
-**/build/
+# === Build Artifacts (ESP-IDF & CMake) ===
 build/
+**/build/
 *.o
 *.a
 *.out
-*.exe # For any host-side utilities compiled on Windows
-
-# ESP-IDF specific build outputs
 *.bin
 *.elf
 *.map
-flasher_args.json # Generated in build directory
+flasher_args.json
 sdkconfig.old
 sdkconfig
+# 注意：sdkconfig.defaults 应该被提交，不要忽略它！
 
-# ESP-IDF dependencies
-# For older versions or manual component management
+# === ESP-IDF Dependencies ===
+managed_components/
+.espressif/
 /components/.idf/
 **/components/.idf/
-# For modern ESP-IDF component manager
-managed_components/
-# If ESP-IDF tools are installed/referenced locally to the project
-.espressif/
 
-# CMake generated files
+# === CMake Generated ===
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
 install_manifest.txt
 CTestTestfile.cmake
+compile_commands.json # LSP 生成，可忽略
 
-# Python environment files
+# === Python ===
 *.pyc
 *.pyo
 *.pyd
 __pycache__/
 *.egg-info/
 dist/
-
-# Virtual environment folders
-venv/
 .venv/
+venv/
 env/
+.env # 环境变量文件，常含敏感信息
 
-# Language Servers
+# === IDEs ===
+.vscode/          # VS Code 配置（含本地路径）
+.idea/            # JetBrains CLion/PyCharm
+*.workspace
+*.suo
+*.sln.docstates
 .clangd/
 .ccls-cache/
-compile_commands.json
 
-# Windows specific
-Thumbs.db
-ehthumbs.db
-Desktop.ini
+# === Debuggers & Tools ===
+*.jlink
+*.openocd.cfg     # 谨慎：如果是手写配置文件，应提交；如果是生成的，忽略
+# 建议：明确提交手写的调试配置，忽略生成的
 
-# User-specific configuration files
-*.user
-*.workspace # General workspace files, can be from various tools
-*.suo       # Visual Studio Solution User Options
-*.sln.docstates # Visual Studio
+# === Documentation & Notes (Optional) ===
+# 如果你用 Markdown 写笔记，但不想提交草稿
+*.draft.md
