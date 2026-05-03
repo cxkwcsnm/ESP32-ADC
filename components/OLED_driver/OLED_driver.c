@@ -1,10 +1,5 @@
 #include "OLED_driver.h"
-#include "OLED_Data.h"
-#include "myiic.h"
-#include <string.h>
-#include "esp_log.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+
 
 static const char *TAG = "OLED_DRIVER";
 static uint8_t s_oled_buffer[OLED_WIDTH * OLED_PAGES];

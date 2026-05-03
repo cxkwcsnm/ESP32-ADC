@@ -3,6 +3,7 @@
 
 #include "GetBatteryLevel.h"
 #include "OLED_driver.h"
+#include "RTC_time.h"
 
 void OLEDShowTask(void *pvParameters);
 

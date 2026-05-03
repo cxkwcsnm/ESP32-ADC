@@ -1,5 +1,5 @@
 #include "system_oled_show.h"
-#include "RTC_time.h"
+
 
 void OLEDShowTask(void *pvParameters)
 {
@@ -23,6 +23,6 @@ void OLEDShowTask(void *pvParameters)
 
         oled_refresh();
 
-        vTaskDelay(100);
+        vTaskDelay(pdMS_TO_TICKS(500));
     }
 }
