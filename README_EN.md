@@ -9,9 +9,9 @@
 
 [English](README_EN.md) · [简体中文](README.md)
 
-[![License](https://img.shields.io/badge/license/Apache-2.0-blue.svg)
-[![Platform](https://img.shields.io/badge/platform-ESP32--S3-red)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![License](https://img.shields.io/badge/license/Apache-2.0-blue.svg)
+![Platform](https://img.shields.io/badge/platform-ESP32--S3-red)
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
 
 </div>
 
