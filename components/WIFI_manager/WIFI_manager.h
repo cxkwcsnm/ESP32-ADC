@@ -20,6 +20,23 @@ extern "C" {
  */
 esp_err_t wifi_scan(void);
 
+/********************以下是一些辅助函数********************/
+
+/**
+ * @brief       连接到指定WiFi网络
+ * @param       ssid: WiFi网络名称
+ * @param       password: WiFi网络密码
+ * @retval      ESP_OK on success, ESP_FAIL on failure
+ */
+esp_err_t wifi_connect(const char* ssid, const char* password);
+
+/**
+ * @brief       检查WiFi连接状态
+ * @param       无
+ * @retval      true if connected, false otherwise
+ */
+bool wifi_is_connected(void);
+
 #ifdef __cplusplus
 }
 #endif

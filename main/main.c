@@ -31,6 +31,7 @@ void app_main(void)
     ESP_ERROR_CHECK(oled_init());
     ESP_ERROR_CHECK(RTC_init());
     ESP_ERROR_CHECK(wifi_scan());
+    ESP_ERROR_CHECK(wifi_connect("DESKTOP-HTLNPUV 4127", "88888888"));
 
     xTaskCreate(OLEDShowTask, "OLEDShowTask", 4096, NULL, 5, NULL);
 }

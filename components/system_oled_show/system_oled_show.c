@@ -17,7 +17,11 @@ void OLEDShowTask(void *pvParameters)
 
         oled_show_string(0, 3, "Voltage:");
         oled_show_string(48, 3, voltage_str);
-        oled_draw_image(80, 0, wifiImg.data, wifiImg.width, wifiImg.height);
+
+        if(wifi_is_connected())
+        {
+            oled_draw_image(80, 0, wifiImg.data, wifiImg.width, wifiImg.height);
+        }
 
         // 使用 oled_draw_image 显示电池图标
         oled_draw_image(100, 0, battery_pattern(voltage), 19, 8);

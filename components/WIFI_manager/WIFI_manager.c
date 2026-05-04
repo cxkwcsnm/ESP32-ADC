@@ -189,3 +189,49 @@ esp_err_t wifi_scan(void)
     }
     return ESP_OK;
 }
+
+// 在 WIFI_manager.c 中添加
+#include "esp_wifi.h"
+
+static bool s_wifi_connected = false;
+
+// WiFi 事件处理函数
+static void wifi_event_handler(void* arg, esp_event_base_t event_base, 
+                               int32_t event_id, void* event_data)
+{
+    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_CONNECTED) {
+        s_wifi_connected = true;
+        ESP_LOGI(TAG, "WiFi connected");
+    } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
+        s_wifi_connected = false;
+        ESP_LOGI(TAG, "WiFi disconnected");
+    }
+}
+
+// 连接到指定 WiFi
+esp_err_t wifi_connect(const char* ssid, const char* password)
+{
+    // 注册事件处理
+    ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL));
+    
+    // WiFi 配置
+    wifi_config_t wifi_config = {
+        .sta = {
+            .ssid = "",
+            .password = "",
+        },
+    };
+    strlcpy((char*)wifi_config.sta.ssid, ssid, sizeof(wifi_config.sta.ssid));
+    strlcpy((char*)wifi_config.sta.password, password, sizeof(wifi_config.sta.password));
+    
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
+    ESP_ERROR_CHECK(esp_wifi_connect());
+    
+    return ESP_OK;
+}
+
+// 检查 WiFi 连接状态
+bool wifi_is_connected(void)
+{
+    return s_wifi_connected;
+}
