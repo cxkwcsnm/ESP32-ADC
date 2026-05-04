@@ -14,11 +14,20 @@
 #include "system_oled_show.h"
 #include "WIFI_manager.h"
 
+#define WIFI_SSID "DESKTOP-HTLNPUV 4127"
+#define WIFI_PASSWORD "88888888"
+
+wifi_connect_params_t wifi_params = {
+    .ssid = WIFI_SSID,
+    .password = WIFI_PASSWORD
+};
+
 void app_main(void)
 {
-     esp_err_t ret;
-    uint8_t x = 0;
+    esp_log_level_set("wifi", ESP_LOG_WARN);
 
+    esp_err_t ret;
+    
     ret = nvs_flash_init();     /* 初始化NVS */
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
     {
@@ -31,7 +40,8 @@ void app_main(void)
     ESP_ERROR_CHECK(oled_init());
     ESP_ERROR_CHECK(RTC_init());
     ESP_ERROR_CHECK(wifi_scan());
-    ESP_ERROR_CHECK(wifi_connect("DESKTOP-HTLNPUV 4127", "88888888"));
+    
 
+    xTaskCreate(wifi_connect_task, "wifi_connect_task", 4096, &wifi_params, 5, NULL);
     xTaskCreate(OLEDShowTask, "OLEDShowTask", 4096, NULL, 5, NULL);
 }
