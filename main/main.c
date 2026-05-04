@@ -38,8 +38,9 @@ void app_main(void)
     ESP_ERROR_CHECK(myiic_init());
     ESP_ERROR_CHECK(battery_adc_init());
     ESP_ERROR_CHECK(oled_init());
-    ESP_ERROR_CHECK(RTC_init());
     ESP_ERROR_CHECK(wifi_scan());
+    //ESP_ERROR_CHECK(RTC_init());
+    ESP_ERROR_CHECK(RTC_init_with_sntp("CST-8"));
     
 
     xTaskCreate(wifi_connect_task, "wifi_connect_task", 4096, &wifi_params, 5, NULL);
